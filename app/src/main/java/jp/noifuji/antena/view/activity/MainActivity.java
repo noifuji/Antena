@@ -2,6 +2,7 @@ package jp.noifuji.antena.view.activity;
 
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements HeadLineListFragm
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawer;
     TextView mNewestEntryTitle;
+    ImageView mNewestEntryImage;
 
     boolean isFragmentChanging = false;
     String mFragmentCategory;
@@ -49,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements HeadLineListFragm
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
         mNewestEntryTitle = (TextView) findViewById(R.id.newest_entry_title);
+        mNewestEntryImage = (ImageView) findViewById(R.id.newest_entry_image);
 
         //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -219,6 +223,10 @@ public class MainActivity extends AppCompatActivity implements HeadLineListFragm
             return;
         }
         mNewestEntryTitle.setText(headline.getmTitle());
+        byte[] bytes = headline.getmThumbnail();
+        if(bytes != null) {
+            mNewestEntryImage.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+        }
     }
 
     @Override

@@ -41,15 +41,16 @@ public class HeadlineDataStore implements DataStore {
         SQLiteDatabase db = helper.getReadableDatabase();
         ThumbnailOpenHelper helperThumb = new ThumbnailOpenHelper(context);
         SQLiteDatabase dbThumb = helperThumb.getReadableDatabase();
+        HeadlineDao headlineDao = new HeadlineDao(db);
+        ThumbnailDao thumbnailDao = new ThumbnailDao(dbThumb);
 
         try {
-            HeadlineDao headlineDao = new HeadlineDao(db);
             HeadlineEntity entity = headlineDao.findLatestPublicationDate();
             ArrayList<HeadlineEntity> newHeadlines;
 
             Date today = Utils.getDayInMonth(new Date());
             if(entity == null) {
-                Log.i(TAG, "There are no today's entries in Headline Table.");
+                Log.i(TAG, "There are no entries in Headline Table.");
                 newHeadlines = (ArrayList<HeadlineEntity>) webAPI.getHeadlinesFromAPI(String.valueOf(today.getTime()), category);
             }
             else if (today.getTime() < entity.getmPublicationDate()) {
@@ -57,6 +58,9 @@ public class HeadlineDataStore implements DataStore {
                 newHeadlines = (ArrayList<HeadlineEntity>) webAPI.getHeadlinesFromAPI(String.valueOf(entity.getmPublicationDate()), category);
             } else {
                 Log.i(TAG, "There are no today's entries in Headline Table.");
+                //データベースを全消し
+                headlineDao.allClear();
+                thumbnailDao.allClear();
                 newHeadlines = (ArrayList<HeadlineEntity>) webAPI.getHeadlinesFromAPI(String.valueOf(today.getTime()), category);
             }
 
@@ -81,7 +85,6 @@ public class HeadlineDataStore implements DataStore {
                 temp.setIsNew(entity1.isNew());
 
                 //サムネがあれば格納する
-                ThumbnailDao thumbnailDao = new ThumbnailDao(dbThumb);
                 ThumbnailEntity thumb = thumbnailDao.findById(temp.getmSysId());
                 if (thumb != null) {
                     temp.setmThumbnail(thumb.getmThumbnail());
@@ -113,22 +116,22 @@ public class HeadlineDataStore implements DataStore {
                 Bitmap bmp = null;
                 bmp = webAPI.getThumbnail(headline.getmThumbnailFileName());
 
+                //TODO nullじゃないなんか適当なデータをつっこんでるけどどうにかする
+                byte[] bytes = {0};
                 if (bmp == null) {
                     Log.e(TAG, "getThumbnail No:" + System.currentTimeMillis());
-                    //TODO nullじゃないなんか適当なデータをつっこんでるけどどうにかする
-                    byte[] bytes = {0};
                     headline.setmThumbnail(bytes);
                 } else {
                     Log.e(TAG, "getThumbnail End:" + System.currentTimeMillis());
                     bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);
-                    byte[] bytes = baos.toByteArray();
+                    bytes = baos.toByteArray();
                     headline.setmThumbnail(bytes);
-
-                    ThumbnailEntity temp = new ThumbnailEntity();
-                    temp.setmSysId(headline.getmSysId());
-                    temp.setmThumbnail(bytes);
-                    thumbnailDao.insert(temp);
                 }
+
+                ThumbnailEntity temp = new ThumbnailEntity();
+                temp.setmSysId(headline.getmSysId());
+                temp.setmThumbnail(bytes);
+                thumbnailDao.insert(temp);
             }
         } finally {
             db.close();

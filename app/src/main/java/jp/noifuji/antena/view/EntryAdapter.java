@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -91,7 +90,7 @@ public class EntryAdapter extends ArrayAdapter<Headline> {
         /*サムネイル　追加コード*/
          thumbnailView = (ImageView) view.findViewById(R.id.thumbnail);
         //TODO 消す 実験用
-        thumbnailView = (ImageView) view.findViewById(R.id.thumbnail);
+        /*thumbnailView = (ImageView) view.findViewById(R.id.thumbnail);
         thumbnailView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,21 +102,29 @@ public class EntryAdapter extends ArrayAdapter<Headline> {
                 float height = scale * rect.height();
                 Log.d(TAG, "size:" + width + " x " + height);
             }
-        });
+        });*/
         Bitmap bmp = null;
         byte[] bytes = item.getmThumbnail(); //ここに画像データが入っているものとする
         if (bytes != null) {
-            bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            thumbnailView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            thumbnailView.setImageBitmap(bmp);
-            thumbnailView.setColorFilter(mContext.getResources().getColor(R.color.transparent));
+            if(bytes.length == 1) {
+                thumbnailView.setVisibility(View.INVISIBLE);
+                //thumbnailView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.default_thumbnail));
+                //thumbnailView.setColorFilter(mContext.getResources().getColor(R.color.transparent));
+            } else {
+                Log.d(TAG, "thumbnail size : " + bytes.length);
+                bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                thumbnailView.setVisibility(View.VISIBLE);
+                thumbnailView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                thumbnailView.setImageBitmap(bmp);
+                thumbnailView.setColorFilter(mContext.getResources().getColor(R.color.transparent));
+            }
         } else {
-            thumbnailView.setImageDrawable(mContext.getDrawable(R.drawable.default_thumbnail));
+            thumbnailView.setVisibility(View.VISIBLE);
+            thumbnailView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.default_thumbnail));
             thumbnailView.setColorFilter(mContext.getResources().getColor(R.color.ripple));
         }
         /*サムネイル　追加コード*/
 
-        Log.e(TAG, "getView:" + System.currentTimeMillis());
 
         titleTextView.setText(item.getmTitle());
         //publicationDateTextView.setText(item.getFormedPublicationDate("MM/dd HH:mm"));

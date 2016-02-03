@@ -175,6 +175,7 @@ public class HeadLineListFragment extends Fragment implements EntryAdapter.OnHea
 
     @Override
     public void onHeadlineDisplayed(Headline headline) {
+        Log.d(TAG, "Loading thumbnail...");
         mHeadlineListPresenter.getThumbnailImage(headline);
     }
 
@@ -252,7 +253,7 @@ public class HeadLineListFragment extends Fragment implements EntryAdapter.OnHea
      * @param updatedHeadline
      */
     public void onReceivedThumbnail(Headline updatedHeadline) {
-        Log.d(TAG, updatedHeadline.getmTitle());
+        Log.d(TAG, "Thumnail is updated. title:" +  updatedHeadline.getmTitle());
         ((EntryAdapter)mListView.getAdapter()).setItem(updatedHeadline);
         ((EntryAdapter)mListView.getAdapter()).notifyDataSetChanged();
     }

@@ -236,4 +236,11 @@ public class HeadlineDao {
         String whereClause = COLUMN_SYS_ID + "='" + sysId + "'";
         return db.delete(TABLE_NAME, whereClause, null);
     }
+
+    /**
+     * テーブルを削除
+     */
+    public int allClear() {
+        return db.delete(TABLE_NAME, null, null);
+    }
 }

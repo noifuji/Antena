@@ -78,4 +78,13 @@ public class ThumbnailDao {
         String whereClause = COLUMN_SYS_ID + "='" + sysId + "'";
         return db.delete(TABLE_NAME, whereClause, null);
     }
+
+    /**
+     * 全てのデータの削除   ----------------⑤
+     *
+     * @return
+     */
+    public int allClear() {
+        return db.delete(TABLE_NAME, null, null);
+    }
 }
