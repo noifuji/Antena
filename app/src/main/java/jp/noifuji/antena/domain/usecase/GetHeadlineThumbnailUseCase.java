@@ -4,12 +4,18 @@ import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.Loader;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 
 import org.json.JSONException;
 
 import java.io.IOException;
 
+import jp.noifuji.antena.R;
 import jp.noifuji.antena.data.entity.Headline;
 import jp.noifuji.antena.data.repository.HeadlineRepository;
 
@@ -17,19 +23,21 @@ import jp.noifuji.antena.data.repository.HeadlineRepository;
  * Created by ryoma on 2015/12/10.
  */
 public class GetHeadlineThumbnailUseCase  extends AsyncTaskLoader<AsyncResult<Headline>> implements LoaderManager.LoaderCallbacks<AsyncResult<Headline>> {
-    private static final String TAG = "GetHeadlineThumbnailUseCase";
+    private static final String TAG = "GetHeadlineThumbnail";
     private static final int LOADER_ID = 2;
     private Loader mLoader;
     private HeadlineRepository mHeadlineRepository;
     private Context mContext;
     private Headline mHeadline;
     private GetHeadlineThumbnailUseCaseListener mUseCaseListener;
+    private ImageView mImageView;
 
-    public GetHeadlineThumbnailUseCase(Context context, HeadlineRepository headlineRepository, Headline headline) {
+    public GetHeadlineThumbnailUseCase(Context context, HeadlineRepository headlineRepository, Headline headline, ImageView imageView) {
         super(context);
         this.mHeadlineRepository = headlineRepository;
         mContext = context;
         mHeadline = headline;
+        mImageView = imageView;
     }
 
     @Override
@@ -38,6 +46,7 @@ public class GetHeadlineThumbnailUseCase  extends AsyncTaskLoader<AsyncResult<He
         Headline headline = null;
         try {
             headline = mHeadlineRepository.headlines().thumbnail(mContext, mHeadline);
+            Log.d(TAG, "loadInBackground() : " + headline.getmTitle());
         } catch (IOException e) {
             e.printStackTrace();
             //TODO メッセージを設定する
@@ -65,7 +74,26 @@ public class GetHeadlineThumbnailUseCase  extends AsyncTaskLoader<AsyncResult<He
             }
             return;
         }
-        mUseCaseListener.onGetHeadlineThumbnailUseCaseCompleted(data.getData());
+        Log.d(TAG, "onLoadFinished() : " + data.getData().getmTitle());
+        Bitmap bmp = null;
+        byte[] bytes = data.getData().getmThumbnail(); //ここに画像データが入っているものとする
+        if (bytes != null) {
+            if(bytes.length == 1) {
+                mImageView.setVisibility(View.INVISIBLE);
+            } else {
+                Log.d(TAG, "thumbnail size : " + bytes.length);
+                bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                mImageView.setVisibility(View.VISIBLE);
+                mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                mImageView.setImageBitmap(bmp);
+                mImageView.setColorFilter(mContext.getResources().getColor(R.color.transparent));
+            }
+        } else {
+            mImageView.setVisibility(View.VISIBLE);
+            mImageView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.default_thumbnail));
+            mImageView.setColorFilter(mContext.getResources().getColor(R.color.ripple));
+        }
+        //mUseCaseListener.onGetHeadlineThumbnailUseCaseCompleted(data.getData());
     }
 
     @Override
@@ -75,7 +103,7 @@ public class GetHeadlineThumbnailUseCase  extends AsyncTaskLoader<AsyncResult<He
 
     public void execute(LoaderManager lm) {
         Bundle data = new Bundle();
-        mLoader = lm.restartLoader(LOADER_ID, data, this);
+        mLoader = lm.restartLoader(hashCode(), data, this);
         mLoader.forceLoad();
     }
 

@@ -1,8 +1,6 @@
 package jp.noifuji.antena.view;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.Log;
@@ -81,7 +79,7 @@ public class EntryAdapter extends ArrayAdapter<Headline> {
         }
 
         Headline item = getItem(position);
-        mListener.onHeadlineDisplayed(item);
+        Log.d(TAG, "getView() [ " + position + "] : " + item.getmTitle());
         TextView tagNewTextView = (TextView) view.findViewById(R.id.tag_new);
         TextView titleTextView = (TextView) view.findViewById(R.id.title);
         TextView publicationDateTextView = (TextView) view.findViewById(R.id.publication_date);
@@ -89,6 +87,11 @@ public class EntryAdapter extends ArrayAdapter<Headline> {
 
         /*サムネイル　追加コード*/
          thumbnailView = (ImageView) view.findViewById(R.id.thumbnail);
+        //ロード前はグレー
+        thumbnailView.setVisibility(View.VISIBLE);
+        thumbnailView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.default_thumbnail));
+        thumbnailView.setColorFilter(mContext.getResources().getColor(R.color.ripple));
+        mListener.onHeadlineDisplayed(item, thumbnailView);
         //TODO 消す 実験用
         /*thumbnailView = (ImageView) view.findViewById(R.id.thumbnail);
         thumbnailView.setOnClickListener(new View.OnClickListener() {
@@ -103,13 +106,11 @@ public class EntryAdapter extends ArrayAdapter<Headline> {
                 Log.d(TAG, "size:" + width + " x " + height);
             }
         });*/
-        Bitmap bmp = null;
+/*        Bitmap bmp = null;
         byte[] bytes = item.getmThumbnail(); //ここに画像データが入っているものとする
         if (bytes != null) {
             if(bytes.length == 1) {
                 thumbnailView.setVisibility(View.INVISIBLE);
-                //thumbnailView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.default_thumbnail));
-                //thumbnailView.setColorFilter(mContext.getResources().getColor(R.color.transparent));
             } else {
                 Log.d(TAG, "thumbnail size : " + bytes.length);
                 bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
@@ -122,7 +123,7 @@ public class EntryAdapter extends ArrayAdapter<Headline> {
             thumbnailView.setVisibility(View.VISIBLE);
             thumbnailView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.default_thumbnail));
             thumbnailView.setColorFilter(mContext.getResources().getColor(R.color.ripple));
-        }
+        }*/
         /*サムネイル　追加コード*/
 
 
@@ -159,6 +160,6 @@ public class EntryAdapter extends ArrayAdapter<Headline> {
     }
 
     public interface OnHeadlineDisplayedListener {
-        void onHeadlineDisplayed(Headline headline);
+        void onHeadlineDisplayed(Headline headline, ImageView imageView);
     }
 }

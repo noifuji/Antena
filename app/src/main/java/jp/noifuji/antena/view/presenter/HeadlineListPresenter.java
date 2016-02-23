@@ -1,10 +1,15 @@
 package jp.noifuji.antena.view.presenter;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 
 import java.util.Collections;
 import java.util.List;
 
+import jp.noifuji.antena.R;
 import jp.noifuji.antena.data.entity.Headline;
 import jp.noifuji.antena.data.entity.HeadlineComparator;
 import jp.noifuji.antena.data.repository.HeadlineRepositoryImpl;
@@ -61,12 +66,23 @@ public class HeadlineListPresenter implements Presenter, GetHeadlineListUseCase.
         this.mHeadlineListFragment.viewEntry(headline);
     }
 
-    public void getThumbnailImage(Headline headline) {
+    public void getThumbnailImage(Headline headline, ImageView imageView) {
         if (headline.getmThumbnail() != null) {
             Log.d(TAG, "Thumbnail has been loaded or doesn't exist.");
+            byte[] bytes = headline.getmThumbnail();
+            if(bytes.length == 1) {
+                imageView.setVisibility(View.INVISIBLE);
+            } else {
+                Log.d(TAG, "thumbnail size : " + bytes.length);
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                imageView.setVisibility(View.VISIBLE);
+                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                imageView.setImageBitmap(bmp);
+                imageView.setColorFilter(mHeadlineListFragment.getActivity().getApplicationContext().getResources().getColor(R.color.transparent));
+            }
             return;
         }
-        GetHeadlineThumbnailUseCase getHeadlineThumbnailUseCase = new GetHeadlineThumbnailUseCase(this.mHeadlineListFragment.getActivity(), new HeadlineRepositoryImpl(), headline);
+        GetHeadlineThumbnailUseCase getHeadlineThumbnailUseCase = new GetHeadlineThumbnailUseCase(this.mHeadlineListFragment.getActivity(), new HeadlineRepositoryImpl(), headline, imageView);
         getHeadlineThumbnailUseCase.addListener(this);
         getHeadlineThumbnailUseCase.execute(this.mHeadlineListFragment.getLoaderManager());
     }
