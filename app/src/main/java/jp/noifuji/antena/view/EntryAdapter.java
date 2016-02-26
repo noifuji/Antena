@@ -91,6 +91,7 @@ public class EntryAdapter extends ArrayAdapter<Headline> {
         thumbnailView.setVisibility(View.VISIBLE);
         thumbnailView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.default_thumbnail));
         thumbnailView.setColorFilter(mContext.getResources().getColor(R.color.ripple));
+        thumbnailView.setTag(position);
         mListener.onHeadlineDisplayed(item, thumbnailView);
         //TODO 消す 実験用
         /*thumbnailView = (ImageView) view.findViewById(R.id.thumbnail);

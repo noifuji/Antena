@@ -1,7 +1,7 @@
 package jp.noifuji.antena.data.repository;
 
 import jp.noifuji.antena.data.repository.datastore.DataStore;
-import jp.noifuji.antena.data.repository.datastore.HeadlineDataStore;
+import jp.noifuji.antena.data.repository.datastore.DataStoreImpl;
 
 /**
  * Created by ryoma on 2015/11/20.
@@ -9,6 +9,6 @@ import jp.noifuji.antena.data.repository.datastore.HeadlineDataStore;
 public class HeadlineRepositoryImpl implements HeadlineRepository {
     @Override
     public DataStore headlines() {
-        return new HeadlineDataStore();
+        return new DataStoreImpl();
     }
 }

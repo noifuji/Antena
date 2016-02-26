@@ -82,7 +82,8 @@ public class HeadlineListPresenter implements Presenter, GetHeadlineListUseCase.
             }
             return;
         }
-        GetHeadlineThumbnailUseCase getHeadlineThumbnailUseCase = new GetHeadlineThumbnailUseCase(this.mHeadlineListFragment.getActivity(), new HeadlineRepositoryImpl(), headline, imageView);
+        Log.d(TAG, "image view tag is " + imageView.getTag() + "[" + headline.getmTitle() + "]");
+        GetHeadlineThumbnailUseCase getHeadlineThumbnailUseCase = new GetHeadlineThumbnailUseCase(this.mHeadlineListFragment.getActivity(), new HeadlineRepositoryImpl(), headline, (Integer) imageView.getTag());
         getHeadlineThumbnailUseCase.addListener(this);
         getHeadlineThumbnailUseCase.execute(this.mHeadlineListFragment.getLoaderManager());
     }
@@ -138,11 +139,11 @@ public class HeadlineListPresenter implements Presenter, GetHeadlineListUseCase.
     }
 
     @Override
-    public void onGetHeadlineThumbnailUseCaseCompleted(Headline headline) {
+    public void onGetHeadlineThumbnailUseCaseCompleted(Headline headline, int position) {
         if (headline == null) {
             return;
         }
 
-        this.mHeadlineListFragment.onReceivedThumbnail(headline);
+        this.mHeadlineListFragment.onReceivedThumbnail(headline, position);
     }
 }

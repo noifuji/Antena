@@ -1,17 +1,13 @@
 package jp.noifuji.antena.data.entity;
 
-import android.util.Log;
-
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
  * Created by Ryoma on 2015/10/24.
  */
-public class Headline implements Serializable {
+public class Headline {
     private static final String TAG = "Headline";
-    static final long serialVersionUID = 123123123L;
     private String mSysId = "";
     private String mTitle = "";
     private String mUrl = "";
@@ -140,10 +136,8 @@ public class Headline implements Serializable {
 
     public String getmThumbnailFileName() {
         String filename;
-        Log.d("Headline", mThumbnailUrl);
         String[] url = mThumbnailUrl.split("/");
         filename = url[url.length-1];
-        Log.d("Headline", filename);
         String[] temp = filename.split("\\.");
         return temp[0];
     }

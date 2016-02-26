@@ -2,6 +2,8 @@ package jp.noifuji.antena.view.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -252,10 +254,33 @@ public class HeadLineListFragment extends Fragment implements EntryAdapter.OnHea
      * サムネイル画像の遅延ロードが完了したら呼ばれる。
      * @param updatedHeadline
      */
-    public void onReceivedThumbnail(Headline updatedHeadline) {
+    public void onReceivedThumbnail(Headline updatedHeadline, int position) {
         Log.d(TAG, "Thumnail is updated. title:" + updatedHeadline.getmTitle());
-        ((EntryAdapter)mListView.getAdapter()).setItem(updatedHeadline);
-        //((EntryAdapter)mListView.getAdapter()).notifyDataSetChanged();
+        ImageView thumbnailImageview = (ImageView) mListView.findViewWithTag(position);
+        int firstVisiblePosition = mListView.getFirstVisiblePosition();
+        Log.d(TAG, "position:" + position + " first:" + firstVisiblePosition);
+        if(firstVisiblePosition <= position) {
+            Bitmap bmp = null;
+            byte[] bytes = updatedHeadline.getmThumbnail(); //ここに画像データが入っているものとする
+            if (bytes != null) {
+                if(bytes.length == 1) {
+                    thumbnailImageview.setVisibility(View.INVISIBLE);
+                } else {
+                        Log.d(TAG, "thumbnail size : " + bytes.length);
+                        bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        thumbnailImageview.setVisibility(View.VISIBLE);
+                        thumbnailImageview.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                        thumbnailImageview.setImageBitmap(bmp);
+                        thumbnailImageview.setColorFilter(getResources().getColor(R.color.transparent));
+                }
+            } else {
+                thumbnailImageview.setVisibility(View.VISIBLE);
+                thumbnailImageview.setImageDrawable(getResources().getDrawable(R.drawable.default_thumbnail));
+                thumbnailImageview.setColorFilter(getResources().getColor(R.color.ripple));
+            }
+        } else {
+            Log.d(TAG, "image view is out of display [" + updatedHeadline.getmTitle() + "]");
+        }
     }
 
 }
