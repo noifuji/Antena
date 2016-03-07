@@ -1,4 +1,4 @@
-package jp.noifuji.antena.view;
+package jp.noifuji.antena.view.adapter;
 
 import android.content.Context;
 import android.graphics.Color;

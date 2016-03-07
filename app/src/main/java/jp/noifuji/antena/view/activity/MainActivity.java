@@ -51,8 +51,7 @@ public class MainActivity extends AppCompatActivity implements HeadLineListFragm
         }
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
-        mNewestEntryTitle = (TextView) findViewById(R.id.newest_entry_title);
-        mNewestEntryImage = (ImageView) findViewById(R.id.newest_entry_image);
+
 
         //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -222,6 +221,8 @@ public class MainActivity extends AppCompatActivity implements HeadLineListFragm
         if(headline == null){
             return;
         }
+        mNewestEntryTitle = (TextView) findViewById(R.id.newest_entry_title);
+        mNewestEntryImage = (ImageView) findViewById(R.id.newest_entry_image);
         mNewestEntryTitle.setText(headline.getmTitle());
         byte[] bytes = headline.getmThumbnail();
         if(bytes != null) {

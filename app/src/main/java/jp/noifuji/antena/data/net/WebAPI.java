@@ -57,7 +57,8 @@ public class WebAPI {
         JSONArray jsonEntries = jsonResponse.getJSONArray("entries");
         Log.d(TAG, jsonEntries.length() + " entries received");
 
-        for (int i = jsonEntries.length() - 1; i >= 0; i--) {
+        //for (int i = jsonEntries.length() - 1; i >= 0; i--) {
+        for (int i = 0; i < jsonEntries.length(); i++) {
             JSONObject jsonEntry = jsonEntries.getJSONObject(i);
             HeadlineEntity headline = new HeadlineEntity(jsonEntry);
             Log.d(TAG, "title:" + headline.getmTitle() + " , category:" + headline.getmCategory() + ", time:" + (new Date(headline.getmPublicationDate())).toString());

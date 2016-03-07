@@ -19,10 +19,10 @@ public class HeadlineDaoTest extends AndroidTestCase {
         helper = new HeadlineOpenHelper(new RenamingDelegatingContext(getContext(), "test_"));
         SQLiteDatabase db = helper.getWritableDatabase();
         try {
-            db.execSQL("insert into headline(sys_id, title, url, pub_date, site_title, summary, thumbnail_url, category, is_read, is_new) values ('34rrgf444', 'Sony', 'http://test.com/123.html', 100, 'himasoku', '概要A', 'http://image.test.com/123.png', 'VIP', 0, 0)");
-            db.execSQL("insert into headline(sys_id, title, url, pub_date, site_title, summary, thumbnail_url, category, is_read, is_new) values ('34r45f444', 'Toshiba', 'http://test.com/143.html', 99, 'himasoku', '概要B', 'http://image.test.com/129.png', 'VIP', 1, 0)");
-            db.execSQL("insert into headline(sys_id, title, url, pub_date, site_title, summary, thumbnail_url, category, is_read, is_new) values ('34rrgfr44', 'Fujitsu', 'http://test.com/125.html', 98, 'himasoku', '概要C', 'http://image.test.com/189.png', 'VIP', 0, 0)");
-            db.execSQL("insert into headline(sys_id, title, url, pub_date, site_title, summary, thumbnail_url, category, is_read, is_new) values ('34uifhndk', 'Hitachi', 'http://test.com/126.html', 45, 'himasoku', '概要D', 'http://image.test.com/89.png', 'VIP', 0, 0)");
+            db.execSQL("insertHeadline into headline(sys_id, title, url, pub_date, site_title, summary, thumbnail_url, category, is_read, is_new) values ('34rrgf444', 'Sony', 'http://test.com/123.html', 100, 'himasoku', '概要A', 'http://image.test.com/123.png', 'VIP', 0, 0)");
+            db.execSQL("insertHeadline into headline(sys_id, title, url, pub_date, site_title, summary, thumbnail_url, category, is_read, is_new) values ('34r45f444', 'Toshiba', 'http://test.com/143.html', 99, 'himasoku', '概要B', 'http://image.test.com/129.png', 'VIP', 1, 0)");
+            db.execSQL("insertHeadline into headline(sys_id, title, url, pub_date, site_title, summary, thumbnail_url, category, is_read, is_new) values ('34rrgfr44', 'Fujitsu', 'http://test.com/125.html', 98, 'himasoku', '概要C', 'http://image.test.com/189.png', 'VIP', 0, 0)");
+            db.execSQL("insertHeadline into headline(sys_id, title, url, pub_date, site_title, summary, thumbnail_url, category, is_read, is_new) values ('34uifhndk', 'Hitachi', 'http://test.com/126.html', 45, 'himasoku', '概要D', 'http://image.test.com/89.png', 'VIP', 0, 0)");
         } finally {
             db.close();
         }

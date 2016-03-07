@@ -4,16 +4,11 @@ import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.Loader;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 
-import org.json.JSONException;
-
-import java.io.IOException;
-
 import jp.noifuji.antena.data.entity.Headline;
-import jp.noifuji.antena.data.repository.HeadlineRepository;
+import jp.noifuji.antena.domain.repository.HeadlineRepository;
 
 /**
  * Created by ryoma on 2015/12/10.
@@ -39,17 +34,8 @@ public class GetHeadlineThumbnailUseCase  extends AsyncTaskLoader<AsyncResult<He
     public AsyncResult<Headline> loadInBackground() {
         AsyncResult<Headline> result = new AsyncResult();
         Headline headline = null;
-        try {
-            headline = mHeadlineRepository.headlines().thumbnail(mContext, mHeadline);
-            Log.d(TAG, "loadInBackground() : " + headline.getmTitle());
-        } catch (IOException e) {
-            e.printStackTrace();
-            //TODO メッセージを設定する
-            result.setException(e, "");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            result.setException(e, "");
-        }
+        headline = mHeadlineRepository.getThumbnailByHeadline(mHeadline);
+        Log.d(TAG, "loadInBackground() : " + headline.getmTitle());
         result.setData(headline);
         return result;
     }
@@ -70,24 +56,6 @@ public class GetHeadlineThumbnailUseCase  extends AsyncTaskLoader<AsyncResult<He
             return;
         }
         Log.d(TAG, "onLoadFinished() : " + data.getData().getmTitle());
-        Bitmap bmp = null;
-        /*byte[] bytes = data.getData().getmThumbnail(); //ここに画像データが入っているものとする
-        if (bytes != null) {
-            if(bytes.length == 1) {
-                mImageView.setVisibility(View.INVISIBLE);
-            } else {
-                Log.d(TAG, "thumbnail size : " + bytes.length);
-                bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                mImageView.setVisibility(View.VISIBLE);
-                mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                mImageView.setImageBitmap(bmp);
-                mImageView.setColorFilter(mContext.getResources().getColor(R.color.transparent));
-            }
-        } else {
-            mImageView.setVisibility(View.VISIBLE);
-            mImageView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.default_thumbnail));
-            mImageView.setColorFilter(mContext.getResources().getColor(R.color.ripple));
-        }*/
         mUseCaseListener.onGetHeadlineThumbnailUseCaseCompleted(data.getData(), mViewTag);
     }
 

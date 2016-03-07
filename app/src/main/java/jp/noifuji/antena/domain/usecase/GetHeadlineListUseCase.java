@@ -6,14 +6,10 @@ import android.content.Context;
 import android.content.Loader;
 import android.os.Bundle;
 
-import org.json.JSONException;
-
-import java.io.IOException;
 import java.util.List;
 
-import jp.noifuji.antena.constants.ErrorMessage;
 import jp.noifuji.antena.data.entity.Headline;
-import jp.noifuji.antena.data.repository.HeadlineRepository;
+import jp.noifuji.antena.domain.repository.HeadlineRepository;
 import jp.noifuji.antena.util.Utils;
 
 /**
@@ -43,15 +39,8 @@ public class GetHeadlineListUseCase extends AsyncTaskLoader<AsyncResult<List<Hea
     public AsyncResult<List<Headline>> loadInBackground() {
         AsyncResult<List<Headline>> result = new AsyncResult<List<Headline>>();
         List<Headline> headlineList = null;
-        try {
-            headlineList = mHeadlineRepository.headlines().headlineList(mContext, mCategory);
-        } catch (IOException e) {
-            e.printStackTrace();
-            result.setException(e, ErrorMessage.E001);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            result.setException(e, ErrorMessage.E002);
-        }
+        //headlineList = mHeadlineRepository.headlines().headlineList(mContext, mCategory);
+        headlineList = mHeadlineRepository.getAllHeadlines();
         result.setData(headlineList);
         return result;
     }

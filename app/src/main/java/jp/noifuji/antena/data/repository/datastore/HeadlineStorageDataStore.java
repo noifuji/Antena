@@ -58,4 +58,20 @@ public class HeadlineStorageDataStore implements HeadlineDataStore {
         }
         return bytes;
     }
+
+    @Override
+    public void insertHeadline(HeadlineEntity entity) {
+        HeadlineOpenHelper helper = new HeadlineOpenHelper(mContext);
+        SQLiteDatabase db = helper.getReadableDatabase();
+        HeadlineDao headlineDao = new HeadlineDao(db);
+        headlineDao.insert(entity);
+    }
+
+    @Override
+    public void insertThumbnail(ThumbnailEntity entity) {
+        ThumbnailOpenHelper helper = new ThumbnailOpenHelper(mContext);
+        SQLiteDatabase db = helper.getReadableDatabase();
+        ThumbnailDao thumbnailDao = new ThumbnailDao(db);
+        thumbnailDao.insert(entity);
+    }
 }

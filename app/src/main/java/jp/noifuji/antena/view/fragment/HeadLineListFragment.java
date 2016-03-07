@@ -24,7 +24,7 @@ import butterknife.ButterKnife;
 import jp.noifuji.antena.R;
 import jp.noifuji.antena.constants.Category;
 import jp.noifuji.antena.data.entity.Headline;
-import jp.noifuji.antena.view.EntryAdapter;
+import jp.noifuji.antena.view.adapter.EntryAdapter;
 import jp.noifuji.antena.view.presenter.HeadlineListPresenter;
 
 
@@ -103,7 +103,6 @@ public class HeadLineListFragment extends Fragment implements EntryAdapter.OnHea
                 //((EntryAdapter) mListView.getAdapter()).notifyDataSetChanged();
             }
         });
-
 
 
         this.loadHeadlineList();
@@ -211,7 +210,7 @@ public class HeadLineListFragment extends Fragment implements EntryAdapter.OnHea
     }
 
     public void renderHeadlineList(List<Headline> headlineList) {
-        if(headlineList.size() == 0) {
+        if (headlineList.size() == 0) {
             return;
         }
         EntryAdapter adapter = new EntryAdapter(this.getActivity().getApplication(), R.layout.list_item, headlineList, this);
@@ -242,6 +241,7 @@ public class HeadLineListFragment extends Fragment implements EntryAdapter.OnHea
 
     /**
      * 記事を既読状態にする
+     *
      * @param position
      */
     public void readHeadline(int position) {//@
@@ -252,6 +252,7 @@ public class HeadLineListFragment extends Fragment implements EntryAdapter.OnHea
 
     /**
      * サムネイル画像の遅延ロードが完了したら呼ばれる。
+     *
      * @param updatedHeadline
      */
     public void onReceivedThumbnail(Headline updatedHeadline, int position) {
@@ -259,21 +260,30 @@ public class HeadLineListFragment extends Fragment implements EntryAdapter.OnHea
         ImageView thumbnailImageview = (ImageView) mListView.findViewWithTag(position);
         int firstVisiblePosition = mListView.getFirstVisiblePosition();
         Log.d(TAG, "position:" + position + " first:" + firstVisiblePosition);
-        if(firstVisiblePosition <= position) {
+        if (firstVisiblePosition <= position) {
             Bitmap bmp = null;
             byte[] bytes = updatedHeadline.getmThumbnail(); //ここに画像データが入っているものとする
             if (bytes != null) {
-                if(bytes.length == 1) {
+                if (bytes.length == 1) {
+                    if (thumbnailImageview == null) {
+                        return;
+                    }
                     thumbnailImageview.setVisibility(View.INVISIBLE);
                 } else {
-                        Log.d(TAG, "thumbnail size : " + bytes.length);
-                        bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        thumbnailImageview.setVisibility(View.VISIBLE);
-                        thumbnailImageview.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                        thumbnailImageview.setImageBitmap(bmp);
-                        thumbnailImageview.setColorFilter(getResources().getColor(R.color.transparent));
+                    Log.d(TAG, "thumbnail size : " + bytes.length);
+                    bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    if (thumbnailImageview == null) {
+                        return;
+                    }
+                    thumbnailImageview.setVisibility(View.VISIBLE);
+                    thumbnailImageview.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    thumbnailImageview.setImageBitmap(bmp);
+                    thumbnailImageview.setColorFilter(getResources().getColor(R.color.transparent));
                 }
             } else {
+                if (thumbnailImageview == null) {
+                    return;
+                }
                 thumbnailImageview.setVisibility(View.VISIBLE);
                 thumbnailImageview.setImageDrawable(getResources().getDrawable(R.drawable.default_thumbnail));
                 thumbnailImageview.setColorFilter(getResources().getColor(R.color.ripple));

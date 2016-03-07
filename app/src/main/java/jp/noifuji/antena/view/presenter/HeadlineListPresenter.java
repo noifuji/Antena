@@ -12,7 +12,7 @@ import java.util.List;
 import jp.noifuji.antena.R;
 import jp.noifuji.antena.data.entity.Headline;
 import jp.noifuji.antena.data.entity.HeadlineComparator;
-import jp.noifuji.antena.data.repository.HeadlineRepositoryImpl;
+import jp.noifuji.antena.data.repository.HeadlineDataRepository;
 import jp.noifuji.antena.domain.usecase.GetHeadlineListUseCase;
 import jp.noifuji.antena.domain.usecase.GetHeadlineThumbnailUseCase;
 import jp.noifuji.antena.view.fragment.HeadLineListFragment;
@@ -25,7 +25,7 @@ public class HeadlineListPresenter implements Presenter, GetHeadlineListUseCase.
     private static final String TAG = "HeadlineListPresenter";
     private static HeadlineListPresenter instance = new HeadlineListPresenter();
     private HeadLineListFragment mHeadlineListFragment;//@フラグメントが死んだときやばくね??
-    private GetHeadlineListUseCase g;//TODO 名前変えろ
+    private GetHeadlineListUseCase getHeadlineListUseCase;//TODO 名前変えろ
 
     private HeadlineListPresenter() {
     }
@@ -83,7 +83,7 @@ public class HeadlineListPresenter implements Presenter, GetHeadlineListUseCase.
             return;
         }
         Log.d(TAG, "image view tag is " + imageView.getTag() + "[" + headline.getmTitle() + "]");
-        GetHeadlineThumbnailUseCase getHeadlineThumbnailUseCase = new GetHeadlineThumbnailUseCase(this.mHeadlineListFragment.getActivity(), new HeadlineRepositoryImpl(), headline, (Integer) imageView.getTag());
+        GetHeadlineThumbnailUseCase getHeadlineThumbnailUseCase = new GetHeadlineThumbnailUseCase(this.mHeadlineListFragment.getActivity(), new HeadlineDataRepository(mHeadlineListFragment.getActivity()), headline, (Integer) imageView.getTag());
         getHeadlineThumbnailUseCase.addListener(this);
         getHeadlineThumbnailUseCase.execute(this.mHeadlineListFragment.getLoaderManager());
     }
@@ -106,9 +106,10 @@ public class HeadlineListPresenter implements Presenter, GetHeadlineListUseCase.
     private void getHeadlineList(String category) {
         Log.e(TAG, "StartRefresh:" + System.currentTimeMillis());
         //ヘッドラインのリストを取得する。
-        g = new GetHeadlineListUseCase(this.mHeadlineListFragment.getActivity(), new HeadlineRepositoryImpl(), category);
-        g.addListener(this);
-        g.execute(this.mHeadlineListFragment.getLoaderManager());
+        //getHeadlineListUseCase = new GetHeadlineListUseCase(this.mHeadlineListFragment.getActivity(), new HeadlineRepositoryImpl(), category);
+        getHeadlineListUseCase = new GetHeadlineListUseCase(this.mHeadlineListFragment.getActivity(), new HeadlineDataRepository(mHeadlineListFragment.getActivity()), category);
+        getHeadlineListUseCase.addListener(this);
+        getHeadlineListUseCase.execute(this.mHeadlineListFragment.getLoaderManager());
     }
 
     @Override
